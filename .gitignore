@@ -22,3 +22,5 @@ docking/output/
 
 # VS Code
 .vscode/
+
+results/models/egfr_morgan_rf_final.joblib
