@@ -1,0 +1,15 @@
+Model,Algorithm,Features,Evaluation,Source,R2,RMSE,MAE,R2 SD,RMSE SD,MAE SD,Task,Target,Saved model
+Linear regression — 8 descriptors,Linear regression,8 physicochemical descriptors,Random split,04_model_training.ipynb,0.1355319280138485,1.2066292926351991,0.9762554476938872,,,,Regression,pIC50,
+Random forest — 8 descriptors,Random forest,8 physicochemical descriptors,Random split,04_model_training.ipynb,0.418860614723655,0.989326267536502,0.7492829586153257,,,,Regression,pIC50,
+Random forest — Morgan fingerprints,Random forest,Morgan fingerprints,Random split,04_model_training.ipynb,0.7211766550159935,0.685273522349419,0.5061008931575558,,,,Regression,pIC50,
+Random forest — Morgan + 8 descriptors,Random forest,Morgan fingerprints + 8 descriptors,Random split,04_model_training.ipynb,0.7091621479794942,0.6998820408912941,0.5174165999260287,,,,Regression,pIC50,
+Random forest — Morgan fingerprints,Random forest,Morgan fingerprints,5-fold CV,04_model_training.ipynb,0.711,0.702,0.51,0.012,0.017,0.01,Regression,pIC50,
+Random forest — Morgan fingerprints,Random forest,Morgan fingerprints,Scaffold split,04_model_training.ipynb,0.619,0.784,0.584,,,,Regression,pIC50,
+Neural network — Morgan fingerprints,Neural network,Morgan fingerprints,Random split,04_model_training.ipynb,0.637,0.782,0.586,,,,Regression,pIC50,
+Neural network — Morgan fingerprints,Neural network,Morgan fingerprints,Scaffold split,04_model_training.ipynb,0.5,0.898,0.673,,,,Regression,pIC50,
+Random forest — RDKit descriptors,Random forest,RDKit descriptors,Random split,04b_rdkit_qsar_models.ipynb,0.637860780219765,0.7809750617333883,0.5962519116507029,,,,Regression,pIC50,
+Gradient boosting — RDKit descriptors,Gradient boosting,RDKit descriptors,Random split,04b_rdkit_qsar_models.ipynb,0.6285292816874959,0.7909730347564115,0.610580704596381,,,,Regression,pIC50,
+Ridge regression — RDKit descriptors,Ridge regression,RDKit descriptors,Random split,04b_rdkit_qsar_models.ipynb,0.3646565004142968,1.0344361297871243,0.811110484049742,,,,Regression,pIC50,
+Random forest — RDKit descriptors,Random forest,RDKit descriptors,Scaffold split,04b_rdkit_qsar_models.ipynb,0.5775777454663586,0.8249766076698817,0.6281797488791012,,,,Regression,pIC50,
+Gradient boosting — RDKit descriptors,Gradient boosting,RDKit descriptors,Scaffold split,04b_rdkit_qsar_models.ipynb,0.4868455597404186,0.9092687905393564,0.7021121959014306,,,,Regression,pIC50,
+Random forest — Morgan fingerprints,Random forest,Morgan fingerprints,Full training set,05_candidate_screening.ipynb,,,,,,,Regression,pIC50,results/models/egfr_morgan_rf_final.joblib

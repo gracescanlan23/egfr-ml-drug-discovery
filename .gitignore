@@ -16,6 +16,7 @@ env/
 # Data
 data/raw/
 data/interim/
+*.joblib
 
 # Large docking files
 docking/output/

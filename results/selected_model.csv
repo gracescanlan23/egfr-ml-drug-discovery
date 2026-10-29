@@ -1,0 +1,2 @@
+Selected model,Task,Target,Features,Selection rule,Scaffold-split R2,Scaffold-split RMSE,Scaffold-split MAE,Random-split R2,Deployed file,Best classifier,Classifier MCC
+Random forest — Morgan fingerprints,Regression,pIC50,"Morgan fingerprints (radius 2, 2048 bits)",Highest scaffold-split R2,0.619,0.784,0.584,0.721,results/models/egfr_morgan_rf_final.joblib,Random forest — Morgan fingerprints,0.648

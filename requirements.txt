@@ -1,0 +1,14 @@
+biopython==1.88
+joblib==1.6.0
+matplotlib==3.11.1
+meeko==0.8.0
+numpy==2.5.3
+openbabel==3.2.1
+openmm==8.6.1
+pandas==3.0.5
+pdbfixer==1.12.0
+rdkit==2026.3.1
+requests==2.34.2
+scikit-learn==1.9.0
+scipy==1.18.0
+seaborn==0.13.2

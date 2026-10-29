@@ -9,7 +9,7 @@ The workflow combines experimental bioactivity data, molecular feature engineeri
 
 Machine learning models were trained to predict EGFR inhibitory activity (pIC50). The best-performing model was subsequently applied to an external ZINC compound library to identify promising candidates for structure-based evaluation.
 
-**Current status:** Machine learning, virtual screening, and candidate prioritization are complete. Molecular docking is in progress, with EGFR receptor preparation completed.
+**Current status:** Machine learning, virtual screening, candidate prioritization, and molecular docking are complete. The docking protocol was checked by YY3 redocking, and the 10 candidates were scored in the EGFR kinase site.
 
 ---
 
@@ -43,8 +43,12 @@ egfr-ml-drug-discovery/
 │   ├── 02_data_preprocessing.ipynb
 │   ├── 03_molecular_features.ipynb
 │   ├── 04_model_training.ipynb
+│   ├── 04b_rdkit_qsar_models.ipynb
+│   ├── 04c_activity_classification.ipynb
+│   ├── 04d_model_comparison.ipynb
 │   ├── 05_candidate_screening.ipynb
-│   └── 06_molecular_docking.ipynb
+│   ├── 06_molecular_docking.ipynb
+│   └── 07_docking_analysis.ipynb
 │
 ├── src/
 │   ├── __init__.py
@@ -54,12 +58,12 @@ egfr-ml-drug-discovery/
 │
 ├── docking/
 │   ├── input/
-│   └── output/
+│   ├── output/
+│   └── results/
 │
 ├── results/
 │   ├── candidates/
-│   ├── models/
-│   └── model_comparison.csv
+│   └── models/
 │
 ├── figures/
 ├── docs/
@@ -276,21 +280,42 @@ Prepared receptor file:
 
 `docking/input/egfr_prepared.pdb`
 
-### 4.5. Remaining Docking Workflow
+### 4.5. Docking Workflow
 
-The following steps are planned:
+1. Validate the prepared receptor by comparing original and prepared heavy-atom coordinates. **Done.**
+2. Convert the prepared receptor into AutoDock-compatible PDBQT format. **Done.**
+3. Prepare the crystallographic reference ligand and selected ZINC compounds. **Done.**
+4. Validate the docking protocol by redocking YY3 and calculating heavy-atom RMSD. **Done.**
+5. Dock the selected candidates using AutoDock Vina. **Done.**
+6. Compare docking scores and binding poses. **Done.**
+7. Examine protein-ligand interactions and prioritize compounds for further investigation. **Done.**
 
-1. Validate the prepared receptor by comparing original and prepared heavy-atom coordinates.
-2. Convert the prepared receptor into AutoDock-compatible PDBQT format.
-3. Prepare the crystallographic reference ligand and selected ZINC compounds.
-4. Validate the docking protocol, including assessment of reference-ligand redocking where appropriate.
-5. Dock the selected candidates using AutoDock Vina.
-6. Compare docking scores and binding poses.
-7. Examine protein-ligand interactions and prioritize compounds for further investigation.
+YY3 contains an acrylamide and may bind covalently. The Vina runs are noncovalent, so the redocking RMSD and candidate scores are an approximate check of this protocol rather than a model of covalent bond formation.
 
-Because the selected structure contains a co-crystallized ligand that may involve covalent binding, the suitability of conventional noncovalent docking and reference-ligand redocking must be assessed before interpreting docking results.
+### 4.6. Docking Results
 
-**Docking results are pending.**
+**Notebooks:** `06_molecular_docking.ipynb` and `07_docking_analysis.ipynb`
+
+YY3 was redocked with AutoDock Vina 1.2.7 into the prepared EGFR site (exhaustiveness 16, 10 modes). The best pose scored **-8.115 kcal/mol**. Its symmetry-aware heavy-atom RMSD to the crystal pose, calculated in the receptor frame without re-alignment, was **0.747 Å**. That is below the 2 Å redocking criterion used in this project.
+
+All 10 candidates were prepared from canonical SMILES, protonated at pH 7.4, embedded with ETKDGv3 (seed 42), minimized with MMFF94, and docked in the same search box. Chirality from the input SMILES was preserved for every compound. None received a Vina score as favorable as YY3.
+
+The automatic pH 7.4 step over-protonated two candidates, so those two were prepared again from the original canonical SMILES. ZINCpr00000m8N6T is used in the neutral form (−5.604 kcal/mol). ZINCok00000rV1M6 is used mono-protonated on the N-ethyl piperazine nitrogen (−6.624 kcal/mol). The original OpenBabel scores are kept in the score table. The other eight candidates and the YY3 redocking were not changed.
+
+| Compound | Vina score (kcal/mol) | Predicted pIC50 | ML rank | MET793 | LYS745 |
+|---|---:|---:|---:|---|---|
+| YY3 (crystal / redock) | -8.115 | — | — | yes | no |
+| ZINCnG00000g0nB3 | -7.761 | 7.210 | 29 | yes | yes |
+| ZINCpJ00000sUCKz | -7.430 | 7.294 | 19 | yes | yes |
+| ZINCnc00000UlZfA | -7.257 | 7.369 | 6 | yes | yes |
+
+The three best-scoring candidates contact the hinge residue MET793. Crystal YY3 also contacts MET793 (minimum heavy-atom distance 2.93 Å) and does not contact LYS745 within 4 Å. Each of the three candidate poses does contact LYS745. ZINCnG00000g0nB3 shares the largest part of the YY3 contact pattern, including MET793, MET790, LEU792, and LEU844.
+
+Pearson correlation between Vina score and predicted pIC50 on the ten candidates was r = 0.34 (p = 0.34). Agreement between a better docking score and a higher predicted potency would appear as a negative correlation. The two highest machine-learning ranks were not the best docking scores.
+
+Compounds prioritized for further structural inspection are **ZINCnG00000g0nB3**, then **ZINCpJ00000sUCKz** and **ZINCnc00000UlZfA**.
+
+Score, RMSD, pose, and contact files are in `docking/results/`. Figures are in `figures/`.
 
 ---
 
@@ -343,6 +368,8 @@ Recommended execution order:
 05_candidate_screening.ipynb
         ↓
 06_molecular_docking.ipynb
+        ↓
+07_docking_analysis.ipynb
 ```
 
 Generated datasets, trained models, candidate rankings, figures, and docking outputs are organized into their corresponding repository directories.
@@ -383,11 +410,11 @@ Several limitations should be considered when interpreting the results.
 | Binding-site identification | Complete |
 | Docking grid definition | Complete |
 | Receptor repair and hydrogen addition | Complete |
-| Prepared receptor validation | Pending |
-| Receptor and ligand PDBQT preparation | Pending |
-| Docking protocol validation | Pending |
-| Molecular docking | Pending |
-| Docking results analysis | Pending |
+| Prepared receptor validation | Complete |
+| Receptor and ligand PDBQT preparation | Complete |
+| Docking protocol validation | Complete |
+| Molecular docking | Complete |
+| Docking results analysis | Complete |
 
 ---
 
@@ -399,6 +426,6 @@ Morgan fingerprint Random Forest regression provided the strongest overall predi
 
 Drug-likeness, chemical similarity, and structural diversity analyses were incorporated to prioritize compounds for further evaluation.
 
-Molecular docking will provide an additional structure-based assessment of the selected candidates, complementing the ligand-based machine learning predictions.
+Molecular docking added a structure-based comparison of the selected candidates with the crystallographic ligand YY3. The noncovalent scores complement the ligand-based predictions and do not replace experimental testing.
 
 The resulting candidates represent computational hypotheses requiring further validation rather than experimentally confirmed EGFR inhibitors.
